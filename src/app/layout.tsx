@@ -35,8 +35,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
-        <ThemeProvider defaultTheme="system">
+      <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
+        <ThemeProvider 
+        defaultTheme="system"
+        >
         <TooltipProvider delayDuration={0}>
             {children}
           </TooltipProvider>

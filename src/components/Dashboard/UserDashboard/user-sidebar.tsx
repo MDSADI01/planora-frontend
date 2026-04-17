@@ -48,6 +48,11 @@ const menuItems = [
     url: "/add-events",
     icon: CalendarPlus2,
   },
+  {
+    title: "Go to Home Page",
+    url: "/",
+    icon: LayoutDashboard,
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

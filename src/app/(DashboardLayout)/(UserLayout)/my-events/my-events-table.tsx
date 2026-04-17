@@ -4,11 +4,12 @@ import { useMemo, useState, useTransition } from "react";
 
 import {
   deleteEventAction,
-  sendInviteAction,
   updateEventAction,
   type MyEvent,
 } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
+import { sendInvitationAction } from "@/src/app/(DashboardLayout)/(UserLayout)/action/invitation";
 import { Button } from "@/src/components/ui/button";
+import { Input } from "@/src/components/ui/input";
 
 type MyEventsTableProps = {
   initialEvents: MyEvent[];
@@ -24,6 +25,9 @@ const MyEventsTable = ({ initialEvents }: MyEventsTableProps) => {
   const [events, setEvents] = useState(initialEvents);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [editingEvent, setEditingEvent] = useState<MyEvent | null>(null);
+  const [inviteModal, setInviteModal] = useState<{ open: boolean; eventId: string | null }>({ open: false, eventId: null });
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [isSendingInvite, setIsSendingInvite] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const emptyState = useMemo(() => events.length === 0, [events.length]);
@@ -39,9 +43,32 @@ const MyEventsTable = ({ initialEvents }: MyEventsTableProps) => {
   };
 
   const onInvite = (eventId: string) => {
+    setInviteModal({ open: true, eventId });
+    setInviteEmail("");
+  };
+
+  const onSendInvitation = () => {
+    if (!inviteModal.eventId || !inviteEmail) {
+      setMessage({ ok: false, text: "Please enter a valid email address." });
+      setTimeout(() => setMessage(null), 3000);
+      return;
+    }
+
+    setIsSendingInvite(true);
     startTransition(async () => {
-      const result = await sendInviteAction(eventId);
-      setMessage({ ok: result.success, text: result.message });
+      try {
+        const result = await sendInvitationAction(inviteModal.eventId!, inviteEmail);
+        setMessage({ ok: result.success, text: result.message });
+        if (result.success) {
+          setInviteModal({ open: false, eventId: null });
+          setInviteEmail("");
+        }
+      } catch (error) {
+        setMessage({ ok: false, text: "Failed to send invitation. Please try again." });
+      } finally {
+        setIsSendingInvite(false);
+        setTimeout(() => setMessage(null), 5000);
+      }
     });
   };
 
@@ -215,6 +242,59 @@ const MyEventsTable = ({ initialEvents }: MyEventsTableProps) => {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      ) : null}
+
+      {inviteModal.open ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-lg bg-background p-5 shadow-lg">
+            <h2 className="mb-4 text-lg font-semibold">Send Invitation</h2>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="email" className="mb-2 block text-sm font-medium">
+                  Email Address
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter email address"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  className="w-full"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  The email must be accurate and match a registered user
+                </p>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setInviteModal({ open: false, eventId: null })}
+                  disabled={isPending}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  onClick={onSendInvitation}
+                  disabled={isSendingInvite || !inviteEmail}
+                >
+                  {isSendingInvite ? (
+                    <>
+                      <svg className="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Invitation"
+                  )}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       ) : null}
