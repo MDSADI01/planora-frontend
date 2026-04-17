@@ -43,9 +43,16 @@ const getRoleFromToken = (token?: string) => {
 const Navbar = async ({ className }: NavbarProps) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
+  const refreshToken = cookieStore.get("refreshToken")?.value;
   const isLoggedIn = Boolean(accessToken);
   const role = getRoleFromToken(accessToken);
-  const dashboardHref = role === "admin" ? "/adminProfile" : "/profile";
+  console.log("=== Cookie Data ===");
+  console.log("accessToken:", accessToken);
+  console.log("refreshToken:", refreshToken);
+  console.log("isLoggedIn:", isLoggedIn);
+  console.log("role:", role);
+  console.log("===================");
+  const dashboardHref = role === "ADMIN" ? "/adminProfile" : "/profile";
   const isOverlayNav = className?.includes("text-white");
   const navLinks = [
     { label: "Home", href: "/" },

@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  CalendarPlus2,
+  Users,
   CalendarCheck2,
   LayoutDashboard,
-  MessageSquareText,
   UserCircle2,
-  Users,
+  Home,
 } from "lucide-react";
 import {
   Sidebar,
@@ -26,55 +25,40 @@ import {
 const menuItems = [
   {
     title: "Profile",
-    url: "/profile",
+    url: "/adminProfile",
     icon: UserCircle2,
   },
   {
-    title: "My Events",
-    url: "/my-events",
-    icon: CalendarCheck2,
-  },
-  {
-    title: "Event Participants",
-    url: "/event-participants",
+    title: "Manage Users",
+    url: "/users",
     icon: Users,
   },
   {
-    title: "Pending Invitations",
-    url: "/pending-invitations",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "My Reviews",
-    url: "/my-reviews",
-    icon: MessageSquareText,
-  },
-  {
-    title: "Add Events",
-    url: "/add-events",
-    icon: CalendarPlus2,
+    title: "Manage Events",
+    url: "/adminEvents",
+    icon: CalendarCheck2,
   },
   {
     title: "Go to Home Page",
     url: "/",
-    icon: LayoutDashboard,
+    icon: Home,
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   return (
     <Sidebar {...props}>
       <SidebarHeader>
         <div className="px-2 py-1">
-          <p className="text-sm text-muted-foreground">User Dashboard</p>
+          <p className="text-sm text-muted-foreground">Admin Dashboard</p>
           <p className="text-lg font-semibold">Planora</p>
         </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupLabel>Admin Panel</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (

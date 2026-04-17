@@ -1,5 +1,5 @@
 import { Banner } from "@/src/components/Home/Banner/banner";
-import Event from "@/src/components/Home/EventSection/event";
+import UpcomingEvents from "@/src/components/Home/EventSection/upcoming-events";
 import { Footer } from "@/src/components/Home/Footer/footer";
 import { Navbar } from "@/src/components/Home/Navbar/navbar";
 import Promtion from "@/src/components/Home/Promotion/promotion";
@@ -12,8 +12,8 @@ export default function Home() {
         </div>
         <Banner />
       </div>
-      <div>
-        <Event></Event>
+      <div className="container mx-auto px-4 py-12">
+        <UpcomingEvents></UpcomingEvents>
       </div>
       <div>
         <Promtion></Promtion>
