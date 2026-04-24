@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/src/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { ThemeToggle } from "./themeToggle";
+import { ThemeToggle } from "@/src/components/ui/theme-toggle";
 
 interface NavbarProps {
   className?: string;

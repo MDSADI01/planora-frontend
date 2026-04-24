@@ -132,7 +132,7 @@ const PendingInvitationsTable = ({ initialInvitations }: PendingInvitationsTable
                   <td className="px-4 py-3">{formatDate(invitation.event.date)}</td>
                   <td className="px-4 py-3">{invitation.event.time}</td>
                   <td className="px-4 py-3">
-                    {invitation.event.fee ? `$${invitation.event.fee}` : "Free"}
+                    {invitation.event.fee ? `৳${invitation.event.fee}` : "Free"}
                   </td>
                   <td className="px-4 py-3">{getStatusBadge(invitation.status)}</td>
                   <td className="px-4 py-3">

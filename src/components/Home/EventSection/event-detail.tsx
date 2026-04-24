@@ -154,9 +154,18 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
   const handleRegister = async () => {
     setIsRegistering(true);
     setRegistrationMessage(null);
+    
     try {
+      // First, join the event (required for payment flow)
       const result = await joinEventAction(eventId);
-      setRegistrationMessage({ ok: result.success, text: result.message });
+      
+      if (event?.fee && event.fee > 0) {
+        // Paid event - redirect to payment gateway after joining
+        window.location.href = `/paymentGateway?eventId=${eventId}`;
+      } else {
+        // Free event - show success message
+        setRegistrationMessage({ ok: result.success, text: result.message });
+      }
     } catch (err) {
       setRegistrationMessage({ ok: false, text: "Failed to register for event. Please try again." });
     } finally {
@@ -189,8 +198,8 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Event Not Found</h1>
-          <p className="text-gray-600">{error || "The event you're looking for doesn't exist."}</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-zinc-50 mb-2">Event Not Found</h1>
+          <p className="text-gray-600 dark:text-zinc-300">{error || "The event you're looking for doesn't exist."}</p>
         </div>
       </div>
     );
@@ -199,9 +208,9 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
   console.log(event?.image);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-zinc-950">
       {/* Hero Section */}
-      <div className="relative h-96 w-full bg-gray-200">
+      <div className="relative h-96 w-full bg-gray-200 dark:bg-zinc-800">
         {event.image ? (
           <img
             src={event.image}
@@ -216,17 +225,17 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
                   isFree
-                    ? "bg-green-100 text-green-800"
-                    : "bg-blue-100 text-blue-800"
+                    ? "bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300"
+                    : "bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300"
                 }`}
               >
-                {isFree ? "Free" : `$${event.fee}`}
+                {isFree ? "Free" : ` ৳${event.fee}`}
               </span>
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-200">
                 {event.type.replace("_", " ")}
               </span>
               {event.eventCategory && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
                   {event.eventCategory}
                 </span>
               )}
@@ -253,25 +262,25 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Event Details */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold mb-4">Event Details</h2>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">Event Details</h2>
               <div className="space-y-4">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-gray-600 dark:text-zinc-300">
                   <Calendar className="w-5 h-5 mr-3" />
                   <span>{formatDate(event.date)}</span>
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-gray-600 dark:text-zinc-300">
                   <Clock className="w-5 h-5 mr-3" />
                   <span>{event.time}</span>
                 </div>
                 {event.venue && (
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-zinc-300">
                     <MapPin className="w-5 h-5 mr-3" />
                     <span>{event.venue}</span>
                   </div>
                 )}
                 {event.participants && (
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-zinc-300">
                     <Users className="w-5 h-5 mr-3" />
                     <span>{event.participants.length} participants</span>
                   </div>
@@ -280,14 +289,14 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
             </div>
 
             {/* Description */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold mb-4">About This Event</h2>
-              <p className="text-gray-700 leading-relaxed">{event.description}</p>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-900 dark:text-zinc-50">About This Event</h2>
+              <p className="text-gray-700 dark:text-zinc-300 leading-relaxed">{event.description}</p>
             </div>
 
             {/* Reviews Section */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h2 className="text-2xl font-semibold mb-6">Reviews & Comments</h2>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+              <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-zinc-50">Reviews & Comments</h2>
 
               {/* Message Display */}
               {message && (
@@ -304,11 +313,11 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
 
               {/* Add Review Form - Only for logged in users who are not organizers */}
               {currentUser && !isOrganizer() && (
-                <form onSubmit={handleReviewSubmit} className="mb-8 p-4 bg-gray-50 rounded-lg">
-                  <h3 className="text-lg font-medium mb-4">Leave a Review</h3>
+                <form onSubmit={handleReviewSubmit} className="mb-8 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
+                  <h3 className="text-lg font-medium mb-4 text-gray-900 dark:text-zinc-50">Leave a Review</h3>
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                         Rating
                       </label>
                       <div className="flex gap-1">
@@ -323,7 +332,7 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                               className={`w-6 h-6 ${
                                 star <= newReview.rating
                                   ? "text-yellow-400 fill-current"
-                                  : "text-gray-300"
+                                  : "text-gray-300 dark:text-zinc-400"
                               }`}
                             />
                           </button>
@@ -331,14 +340,14 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                       </div>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                         Comment
                       </label>
                       <textarea
                         value={newReview.reviewText}
                         onChange={(e) => setNewReview({ ...newReview, reviewText: e.target.value })}
                         placeholder="Share your experience with this event..."
-                        className="w-full p-3 border border-gray-300 rounded-md resize-none"
+                        className="w-full p-3 border border-gray-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 rounded-md resize-none"
                         rows={4}
                         required
                       />
@@ -354,16 +363,16 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
               )}
 
               {isOrganizer() && (
-                <div className="mb-8 p-4 bg-gray-50 rounded-lg text-center">
-                  <p className="text-gray-600 text-sm">
+                <div className="mb-8 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg text-center">
+                  <p className="text-gray-600 dark:text-zinc-300 text-sm">
                     You are the organizer of this event and cannot leave a review.
                   </p>
                 </div>
               )}
 
               {!currentUser && (
-                <div className="mb-8 p-4 bg-gray-50 rounded-lg text-center">
-                  <p className="text-gray-600 text-sm">
+                <div className="mb-8 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg text-center">
+                  <p className="text-gray-600 dark:text-zinc-300 text-sm">
                     Please <a href="/login" className="text-blue-600 hover:underline">login</a> to leave a review
                   </p>
                 </div>
@@ -373,14 +382,14 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
               <div className="space-y-4">
                 {reviews && reviews.length > 0 ? (
                   reviews.map((review) => (
-                    <div key={review.id} className="border-b pb-4 last:border-b-0">
+                    <div key={review.id} className="border-b border-gray-200 dark:border-zinc-800 pb-4 last:border-b-0">
                       {editingReview?.id === review.id ? (
                         // Edit Mode
-                        <div className="p-4 bg-gray-50 rounded-lg">
-                          <h4 className="font-medium mb-4">Edit Your Review</h4>
+                        <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
+                          <h4 className="font-medium mb-4 text-gray-900 dark:text-zinc-50">Edit Your Review</h4>
                           <div className="space-y-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                                 Rating
                               </label>
                               <div className="flex gap-1">
@@ -403,13 +412,13 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                               </div>
                             </div>
                             <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                                 Comment
                               </label>
                               <textarea
                                 value={editingReview.reviewText || ""}
                                 onChange={(e) => setEditingReview({ ...editingReview, reviewText: e.target.value })}
-                                className="w-full p-3 border border-gray-300 rounded-md resize-none"
+                                className="w-full p-3 border border-gray-300 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 rounded-md resize-none"
                                 rows={3}
                               />
                             </div>
@@ -445,7 +454,7 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                             )}
                             <div className="flex-1">
                               <div className="flex items-center justify-between mb-2">
-                                <h4 className="font-medium">{review.user.name || "Anonymous"}</h4>
+                                <h4 className="font-medium text-gray-900 dark:text-zinc-50">{review.user.name || "Anonymous"}</h4>
                                 <div className="flex items-center">
                                   {[1, 2, 3, 4, 5].map((star) => (
                                     <Star
@@ -453,13 +462,13 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                                       className={`w-4 h-4 ${
                                         star <= review.rating
                                           ? "text-yellow-400 fill-current"
-                                          : "text-gray-300"
+                                          : "text-gray-300 dark:text-zinc-400"
                                       }`}
                                     />
                                   ))}
                                 </div>
                               </div>
-                              <p className="text-gray-700">{review.reviewText}</p>
+                              <p className="text-gray-700 dark:text-zinc-300">{review.reviewText}</p>
                               
                               {/* User-specific controls */}
                               {isCurrentUserReview(review) && (
@@ -489,7 +498,7 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-500 text-center py-8">
+                  <p className="text-gray-500 dark:text-zinc-400 text-center py-8">
                     No reviews yet. Be the first to share your experience!
                   </p>
                 )}
@@ -534,43 +543,43 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
             </div>
 
             {/* Event Info Card */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold mb-4">Event Information</h3>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-zinc-50">Event Information</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Price:</span>
-                  <span className="font-medium">{isFree ? "Free" : `$${event.fee}`}</span>
+                  <span className="text-gray-600 dark:text-zinc-400">Price:</span>
+                  <span className="font-medium text-gray-900 dark:text-zinc-50">{isFree ? "Free" : ` ৳${event.fee}`}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Type:</span>
-                  <span className="font-medium">{event.type.replace("_", " ")}</span>
+                  <span className="text-gray-600 dark:text-zinc-400">Type:</span>
+                  <span className="font-medium text-gray-900 dark:text-zinc-50">{event.type.replace("_", " ")}</span>
                 </div>
                 {event.eventCategory && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Category:</span>
-                    <span className="font-medium">{event.eventCategory}</span>
+                    <span className="text-gray-600 dark:text-zinc-400">Category:</span>
+                    <span className="font-medium text-gray-900 dark:text-zinc-50">{event.eventCategory}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Date:</span>
-                  <span className="font-medium">{formatDate(event.date)}</span>
+                  <span className="text-gray-600 dark:text-zinc-400">Date:</span>
+                  <span className="font-medium text-gray-900 dark:text-zinc-50">{formatDate(event.date)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Time:</span>
-                  <span className="font-medium">{event.time}</span>
+                  <span className="text-gray-600 dark:text-zinc-400">Time:</span>
+                  <span className="font-medium text-gray-900 dark:text-zinc-50">{event.time}</span>
                 </div>
                 {event.venue && (
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Venue:</span>
-                    <span className="font-medium">{event.venue}</span>
+                    <span className="text-gray-600 dark:text-zinc-400">Venue:</span>
+                    <span className="font-medium text-gray-900 dark:text-zinc-50">{event.venue}</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Organizer Info */}
-            <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold mb-4">Organizer</h3>
+            <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-zinc-50">Organizer</h3>
               <div className="flex items-center gap-3 mb-3">
                 {event.organizer.image && (
                   <img
@@ -582,8 +591,8 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                   />
                 )}
                 <div>
-                  <h4 className="font-medium">{event.organizer.name || "Unknown"}</h4>
-                  <p className="text-sm text-gray-600">Event Organizer</p>
+                  <h4 className="font-medium text-gray-900 dark:text-zinc-50">{event.organizer.name || "Unknown"}</h4>
+                  <p className="text-sm text-gray-600 dark:text-zinc-400">Event Organizer</p>
                 </div>
               </div>
             </div>
