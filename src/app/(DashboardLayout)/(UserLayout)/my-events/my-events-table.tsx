@@ -149,7 +149,7 @@ const MyEventsTable = ({ initialEvents }: MyEventsTableProps) => {
                   <td className="px-4 py-3">{event.time}</td>
                   <td className="px-4 py-3">{event.type}</td>
                   <td className="px-4 py-3">{event.eventCategory ?? "-"}</td>
-                  <td className="px-4 py-3">{event.fee ? `$${event.fee}` : "Free"}</td>
+                  <td className="px-4 py-3">{event.fee ? `৳${event.fee}` : "Free"}</td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button

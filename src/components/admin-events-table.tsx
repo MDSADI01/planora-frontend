@@ -158,7 +158,7 @@ const AdminEventsTable = () => {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
                       <DollarSign className="w-3 h-3 text-muted-foreground" />
-                      {event.fee === 0 ? "Free" : `$${event.fee}`}
+                      {event.fee === 0 ? "Free" : `৳${event.fee}`}
                     </div>
                   </td>
                   <td className="px-4 py-3">
