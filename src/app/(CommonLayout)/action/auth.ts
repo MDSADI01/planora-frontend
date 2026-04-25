@@ -55,7 +55,7 @@ async function parseResponse(response: Response) {
   };
 }
 
-async function callAuthApi(endpoint: "login" | "register", payload: Record<string, string>, failMessage: string) {
+async function callAuthApi(endpoint: "login" | "register", payload: Record<string, string>, failMessage: string, redirectUrl: string = "/") {
   try {
     const response = await fetch(`${AUTH_API_URL}/${endpoint}`, {
       method: "POST",
@@ -79,7 +79,7 @@ async function callAuthApi(endpoint: "login" | "register", payload: Record<strin
       refreshToken: data.refreshToken,
     });
 
-    redirect("/");
+    redirect(redirectUrl);
   } catch (error) {
     if (
       typeof error === "object" &&
@@ -104,7 +104,9 @@ export async function submitLogin(_prevState: AuthActionState = initialState, fo
     password: String(formData.get("password") ?? ""),
   };
 
-  return callAuthApi("login", payload, "Login failed. Please try again.");
+  const redirectUrl = String(formData.get("redirect") ?? "/");
+
+  return callAuthApi("login", payload, "Login failed. Please try again.", redirectUrl);
 }
 
 export async function submitRegister(_prevState: AuthActionState = initialState, formData: FormData): Promise<AuthActionState> {

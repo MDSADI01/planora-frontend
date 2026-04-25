@@ -19,7 +19,7 @@ const initialState = {
   message: "",
 };
 
-const LoginForm = () => {
+const LoginForm = ({ redirectUrl }: { redirectUrl?: string }) => {
   const [state, formAction, isPending] = useActionState(submitLogin, initialState);
   const [errors, setErrors] = useState<Partial<Record<keyof LoginFormData, string>>>({});
   const formRef = useRef<HTMLFormElement>(null);
@@ -45,6 +45,11 @@ const LoginForm = () => {
     }
 
     setErrors({});
+
+    // Add redirect URL to form data
+    if (redirectUrl) {
+      formData.append("redirect", redirectUrl);
+    }
 
     // ✅ IMPORTANT: call server action properly
     formAction(formData);

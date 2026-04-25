@@ -537,7 +537,7 @@ const EventDetail = ({ eventId }: EventDetailProps) => {
                 </Button>
               ) : (
                 <Button className="w-full mb-3" size="lg" variant="outline">
-                  <a href="/login">Login to Register</a>
+                  <a href={`/login?redirect=/events/${eventId}`}>Login to Register</a>
                 </Button>
               )}
             </div>
