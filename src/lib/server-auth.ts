@@ -71,7 +71,7 @@ export const clearSessionCookies = async () => {
   cookieStore.delete("auth_user");
 };
 
-const getAuthApiUrl = () => env.AUTH_API_URL;
+const getAuthApiUrl = () => env.AUTH_API_URL || "https://your-api-url.com/auth";
 
 export const tryRefreshAccessToken = async () => {
   const { refreshToken } = await getAuthCookies();

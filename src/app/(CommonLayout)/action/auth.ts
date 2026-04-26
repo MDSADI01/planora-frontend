@@ -31,7 +31,7 @@ type AuthApiResponse = {
   };
 };
 
-const AUTH_API_URL = env.AUTH_API_URL;
+const AUTH_API_URL = env.AUTH_API_URL || "https://your-api-url.com/auth";
 
 async function parseResponse(response: Response) {
   const contentType = response.headers.get("content-type") ?? "";

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { CreditCard, Loader2, Calendar, MapPin, Clock, User, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { initiateEventPaymentAction } from "@/src/app/(CommonLayout)/action/paym
 import { getEventByIdAction, type Event } from "@/src/app/(CommonLayout)/action/event";
 import { getLoggedInUser, type LoggedInUser } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
 
-const PaymentGateway = () => {
+const PaymentGatewayContent = () => {
   const searchParams = useSearchParams();
   const [eventId, setEventId] = useState("");
   const [event, setEvent] = useState<Event | null>(null);
@@ -22,7 +22,7 @@ const PaymentGateway = () => {
       const eventIdParam = searchParams.get("eventId");
       if (eventIdParam) {
         setEventId(eventIdParam);
-        
+
         // Fetch event details
         try {
           const eventData = await getEventByIdAction(eventIdParam);
@@ -47,15 +47,15 @@ const PaymentGateway = () => {
 
   const handlePayment = async () => {
     if (!eventId) return;
-    
+
     setIsLoading(true);
     setMessage(null);
 
     try {
       const result = await initiateEventPaymentAction(eventId);
-      
+
       setMessage({ ok: result.success, text: result.message });
-      
+
       if (result.success && result.data?.paymentUrl) {
         // Redirect to Stripe checkout
         window.location.href = result.data.paymentUrl;
@@ -112,7 +112,7 @@ const PaymentGateway = () => {
               <Calendar className="h-5 w-5 text-blue-600" />
               Event Details
             </h2>
-            
+
             <div className="space-y-4">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4">
                 <h3 className="font-semibold text-lg text-gray-900 mb-2">{event.title}</h3>
@@ -217,6 +217,18 @@ const PaymentGateway = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const PaymentGateway = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    }>
+      <PaymentGatewayContent />
+    </Suspense>
   );
 };
 

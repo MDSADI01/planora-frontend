@@ -55,7 +55,7 @@ type JwtPayload = {
 const getInvitationsApiUrl = () => {
   return (
     env.NEXT_PUBLIC_API_BASE_URL ||
-    env.AUTH_API_URL.replace(/\/auth\/?$/, "")
+    (env.AUTH_API_URL || "https://your-api-url.com/auth").replace(/\/auth\/?$/, "")
   );
 };
 
