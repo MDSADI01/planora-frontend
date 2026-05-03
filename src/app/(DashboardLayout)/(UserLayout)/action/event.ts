@@ -31,6 +31,7 @@ export type MyEvent = {
   type: "IN_PERSON" | "ONLINE";
   fee?: number | null;
   eventCategory?: "PRIVATE" | "PUBLIC" | null;
+  eventTheme?: "CONFERENCES" | "MUSIC_FESTIVAL" | "WORKSHOPS" | "WEDDINGS" | "SPORTS_EVENTS" | "MEETUPS" | null;
   organizerId: string;
 };
 
@@ -150,6 +151,7 @@ export async function createEventAction(
     type: String(formData.get("type") ?? ""),
     fee: Number(formData.get("fee") ?? 0) || undefined,
     eventCategory: String(formData.get("eventCategory") ?? "") || undefined,
+    eventTheme: String(formData.get("eventTheme") ?? "MEETUPS"),
     organizerId: user.id,
   };
 

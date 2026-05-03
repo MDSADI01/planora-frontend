@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { createEventAction } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
 import { Button } from "@/src/components/ui/button";
+import { AutofillInput } from "@/src/components/ui/autofill-input";
 
 const initialState = {
   success: false,
@@ -31,6 +32,7 @@ const addEventSchema = z.object({
       "Fee cannot be negative"
     ),
   eventCategory: z.enum(["PRIVATE", "PUBLIC"]).optional(),
+  eventTheme: z.enum(["CONFERENCES", "MUSIC_FESTIVAL", "WORKSHOPS", "WEDDINGS", "SPORTS_EVENTS", "MEETUPS"]).optional(),
 });
 
 type AddEventFormData = z.infer<typeof addEventSchema>;
@@ -64,6 +66,13 @@ const AddEventForm = ({ organizerId }: AddEventFormProps) => {
       eventCategory: String(formData.get("eventCategory") ?? "PUBLIC") as
         | "PRIVATE"
         | "PUBLIC",
+      eventTheme: String(formData.get("eventTheme") ?? "MEETUPS") as
+        | "CONFERENCES"
+        | "MUSIC_FESTIVAL"
+        | "WORKSHOPS"
+        | "WEDDINGS"
+        | "SPORTS_EVENTS"
+        | "MEETUPS",
     };
 
     const result = addEventSchema.safeParse(values);
@@ -79,6 +88,7 @@ const AddEventForm = ({ organizerId }: AddEventFormProps) => {
         type: fieldErrors.type?.[0],
         fee: fieldErrors.fee?.[0],
         eventCategory: fieldErrors.eventCategory?.[0],
+        eventTheme: fieldErrors.eventTheme?.[0],
       });
       return;
     }
@@ -111,16 +121,15 @@ const AddEventForm = ({ organizerId }: AddEventFormProps) => {
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1 md:col-span-2">
-          <label htmlFor="title" className="text-sm font-medium">
-            Title *
-          </label>
-          <input
+          <AutofillInput
+            formId="create-event"
+            fieldName="title"
+            label="Title *"
             id="title"
             name="title"
-            type="text"
             required
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
             placeholder="Event title"
+            showCommonSuggestions={false}
           />
           {errors.title ? <p className="text-sm text-red-500">{errors.title}</p> : null}
         </div>
@@ -171,17 +180,16 @@ const AddEventForm = ({ organizerId }: AddEventFormProps) => {
         </div>
 
         <div className="space-y-1">
-          <label htmlFor="venue" className="text-sm font-medium">
-            Venue
-          </label>
-          <input
+          <AutofillInput
+            formId="create-event"
+            fieldName="venue"
+            label="Venue"
             id="venue"
             name="venue"
-            type="text"
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+            commonType="venue"
+            showCommonSuggestions={true}
             placeholder="Venue (optional)"
           />
-          {errors.image ? <p className="text-sm text-red-500">{errors.image}</p> : null}
         </div>
 
         <div className="space-y-1">
@@ -228,6 +236,26 @@ const AddEventForm = ({ organizerId }: AddEventFormProps) => {
             <option value="PUBLIC">PUBLIC</option>
             <option value="PRIVATE">PRIVATE</option>
           </select>
+        </div>
+
+        <div className="space-y-1">
+          <label htmlFor="eventTheme" className="text-sm font-medium">
+            Event Theme
+          </label>
+          <select
+            id="eventTheme"
+            name="eventTheme"
+            defaultValue="MEETUPS"
+            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
+          >
+            <option value="CONFERENCES">CONFERENCES</option>
+            <option value="MUSIC_FESTIVAL">MUSIC_FESTIVAL</option>
+            <option value="WORKSHOPS">WORKSHOPS</option>
+            <option value="WEDDINGS">WEDDINGS</option>
+            <option value="SPORTS_EVENTS">SPORTS_EVENTS</option>
+            <option value="MEETUPS">MEETUPS</option>
+          </select>
+          {errors.eventTheme ? <p className="text-sm text-red-500">{errors.eventTheme}</p> : null}
         </div>
 
         <div className="space-y-1">

@@ -1,10 +1,25 @@
 import { redirect } from "next/navigation";
 import { Mail, ShieldCheck, UserRound } from "lucide-react";
 
-import { getLoggedInUser } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
+import { getLoggedInUser, getMyEventsAction } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
+import { getMyInvitationsAction } from "@/src/app/(DashboardLayout)/(UserLayout)/action/invitation";
+import { getEventParticipantsAction } from "@/src/app/(DashboardLayout)/(UserLayout)/action/participant";
+import UserDashboardCharts from "@/src/components/Dashboard/user-dashboard-charts";
 
 const UserProfilePage = async () => {
   const user = await getLoggedInUser();
+  const myEvents = await getMyEventsAction();
+  const myInvitations = await getMyInvitationsAction();
+
+  const participantsPromises = myEvents.map(event =>
+    getEventParticipantsAction(event.id).then(participants => ({
+      eventId: event.id,
+      title: event.title,
+      participants: participants
+    }))
+  );
+  
+  const eventsWithParticipants = await Promise.all(participantsPromises);
   console.log(user);
 
   if (!user) {
@@ -63,6 +78,8 @@ const UserProfilePage = async () => {
           </div>
         </div>
       </div>
+
+      <UserDashboardCharts events={myEvents} invitations={myInvitations} eventsWithParticipants={eventsWithParticipants} />
     </section>
   );
 };

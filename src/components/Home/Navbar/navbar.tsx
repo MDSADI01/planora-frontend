@@ -1,4 +1,4 @@
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, User, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
@@ -18,6 +18,18 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/src/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/src/components/ui/theme-toggle";
 
@@ -32,9 +44,13 @@ const getRoleFromToken = (token?: string) => {
 
     const data = JSON.parse(
       Buffer.from(payload, "base64url").toString("utf-8")
-    ) as { role?: string; userRole?: string };
+    ) as { role?: string; userRole?: string; image?: string; name?: string };
 
-    return data.role || data.userRole;
+    return {
+      role: data.role || data.userRole,
+      image: data.image,
+      name: data.name,
+    };
   } catch {
     return undefined;
   }
@@ -45,7 +61,10 @@ const Navbar = async ({ className }: NavbarProps) => {
   const accessToken = cookieStore.get("accessToken")?.value;
   const refreshToken = cookieStore.get("refreshToken")?.value;
   const isLoggedIn = Boolean(accessToken);
-  const role = getRoleFromToken(accessToken);
+  const userData = getRoleFromToken(accessToken);
+  const role = userData?.role;
+  const userImage = userData?.image;
+  const userName = userData?.name;
   console.log("=== Cookie Data ===");
   console.log("accessToken:", accessToken);
   console.log("refreshToken:", refreshToken);
@@ -54,14 +73,24 @@ const Navbar = async ({ className }: NavbarProps) => {
   console.log("===================");
   const dashboardHref = role === "ADMIN" ? "/adminProfile" : "/profile";
   const isOverlayNav = className?.includes("text-white");
-  const navLinks = [
-    { label: "Home", href: "/" },
-    { label: "Events", href: "/events" },
-    { label: "About", href: "/about" },
-  ];
+  const navLinks = isLoggedIn
+    ? [
+        { label: "Home", href: "/" },
+        { label: "Events", href: "/events" },
+        { label: "My Events", href: "/my-events" },
+        { label: "My Invitations", href: "/pending-invitations" },
+        { label: "About", href: "/about" },
+        { label: "Contact", href: "/contact" },
+      ]
+    : [
+        { label: "Home", href: "/" },
+        { label: "Events", href: "/events" },
+        { label: "About", href: "/about" },
+        { label: "Contact", href: "/contact" },
+      ];
 
   return (
-    <section className={cn("py-4", className)}>
+    <section className={cn("sticky top-0 z-50 w-full border-b border-border/50 bg-background/90 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 transition-all duration-300", className)}>
       <div className="container">
         <nav className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
@@ -76,8 +105,9 @@ const Navbar = async ({ className }: NavbarProps) => {
                     asChild
                     className={cn(
                       navigationMenuTriggerStyle(),
+                      "text-base font-semibold text-foreground/90 hover:text-foreground",
                       isOverlayNav &&
-                        "bg-white/15 text-white backdrop-blur-sm hover:bg-white/25 hover:text-white focus:bg-white/25 focus:text-white data-[state=open]:bg-white/25"
+                        "bg-white/15 text-black backdrop-blur-sm hover:bg-white/25 hover:text-white focus:bg-white/25 focus:text-white data-[state=open]:bg-white/25"
                     )}
                   >
                     <Link href={link.href}>{link.label}</Link>
@@ -96,36 +126,48 @@ const Navbar = async ({ className }: NavbarProps) => {
             />
 
             {isLoggedIn ? (
-              <>
-                <Link href={dashboardHref}>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      isOverlayNav &&
-                        "border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white"
-                    )}
-                  >
-                    Dashboard
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={userImage} alt={userName || "User"} />
+                      <AvatarFallback>{userName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
                   </Button>
-                </Link>
-                <form action={logoutAction}>
-                  <Button
-                    type="submit"
-                    className={cn(
-                      isOverlayNav &&
-                        "bg-white text-black hover:bg-white/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
-                    )}
-                  >
-                    Log Out
-                  </Button>
-                </form>
-              </>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex flex-col space-y-1.5 p-2">
+                    <p className="text-sm font-medium leading-none">{userName || "User"}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {role === "ADMIN" ? "Admin" : "User"}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={dashboardHref} className="cursor-pointer">
+                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <form action={logoutAction} className="cursor-pointer w-full">
+                      <button type="submit" className="flex items-center w-full">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log Out
+                      </button>
+                    </form>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <>
                 <Link href="/login">
                   <Button
                     variant="outline"
+                    size="default"
                     className={cn(
+                      "font-semibold border-2",
                       isOverlayNav &&
                         "border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white"
                     )}
@@ -135,7 +177,9 @@ const Navbar = async ({ className }: NavbarProps) => {
                 </Link>
                 <Link href="/register">
                   <Button
+                    size="default"
                     className={cn(
+                      "font-semibold shadow-md",
                       isOverlayNav &&
                         "bg-white text-black hover:bg-white/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
                     )}
@@ -177,13 +221,25 @@ const Navbar = async ({ className }: NavbarProps) => {
                   <ThemeToggle />
                   {isLoggedIn ? (
                     <>
+                      <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={userImage} alt={userName || "User"} />
+                          <AvatarFallback>{userName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{userName || "User"}</p>
+                          <p className="text-xs text-muted-foreground">{role === "ADMIN" ? "Admin" : "User"}</p>
+                        </div>
+                      </div>
                       <Link href={dashboardHref}>
                         <Button variant="outline" className="w-full">
+                          <LayoutDashboard className="mr-2 h-4 w-4" />
                           Dashboard
                         </Button>
                       </Link>
                       <form action={logoutAction}>
                         <Button type="submit" className="w-full">
+                          <LogOut className="mr-2 h-4 w-4" />
                           Log Out
                         </Button>
                       </form>

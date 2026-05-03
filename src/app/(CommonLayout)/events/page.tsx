@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { getEventsAction, type Event, type EventFilters } from "@/src/app/(CommonLayout)/action/event";
 import EventCard from "@/src/components/Home/EventSection/event-card";
 import EventSearch from "@/src/components/Home/EventSection/event-search";
@@ -10,6 +10,9 @@ const Events = () => {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [displayCount, setDisplayCount] = useState(6);
+  const observerTarget = useRef<HTMLDivElement>(null);
 
   // Load initial events
   useEffect(() => {
@@ -23,6 +26,7 @@ const Events = () => {
       const fetchedEvents = await getEventsAction(filters);
       setEvents(fetchedEvents);
       setFilteredEvents(fetchedEvents);
+      setDisplayCount(6); // Reset pagination on new search
     } catch (err) {
       setError("Failed to load events. Please try again.");
       console.error("Error loading events:", err);
@@ -36,6 +40,31 @@ const Events = () => {
   };
 
   const emptyState = useMemo(() => filteredEvents.length === 0, [filteredEvents.length]);
+  
+  const displayedEvents = filteredEvents.slice(0, displayCount);
+  const hasMore = displayCount < filteredEvents.length;
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          // Adding a tiny delay to simulate network request and show the spinner smoothly
+          setTimeout(() => {
+            setDisplayCount((prev) => prev + 6);
+          }, 300);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasMore]);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -56,7 +85,7 @@ const Events = () => {
           </div>
         )}
 
-        {/* Loading State */}
+        {/* Loading State (Initial Fetch) */}
         {isLoading && (
           <div className="flex justify-center py-8">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -65,11 +94,26 @@ const Events = () => {
 
         {/* Events Grid - 3 Columns */}
         {!isLoading && !emptyState && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredEvents.map((event) => (
-              <EventCard key={event.id} event={event} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displayedEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+
+            {/* Observer Target for Infinite Scroll */}
+            {hasMore ? (
+              <div ref={observerTarget} className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : (
+              displayedEvents.length > 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  <p>You&apos;ve reached the end of the events list!</p>
+                </div>
+              )
+            )}
+          </>
         )}
 
         {/* Empty State */}
@@ -86,4 +130,4 @@ const Events = () => {
   );
 };
 
-export default Events
+export default Events;

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { submitLogin } from "@/src/app/(CommonLayout)/action/auth";
 import { Button } from "@/src/components/ui/button";
+import { AutofillInput } from "@/src/components/ui/autofill-input";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address"),
@@ -86,15 +87,16 @@ const LoginForm = ({ redirectUrl }: { redirectUrl?: string }) => {
         noValidate
       >
         <div className="space-y-1">
-          <label htmlFor="email" className="text-sm font-medium">
-            Email
-          </label>
-          <input
+          <AutofillInput
+            formId="login"
+            fieldName="email"
+            label="Email"
             id="email"
             name="email"
             type="email"
-            className="h-10 w-full rounded-md border bg-background px-3 text-sm"
             disabled={isPending}
+            placeholder="Enter your email"
+            showCommonSuggestions={false}
           />
           {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
         </div>

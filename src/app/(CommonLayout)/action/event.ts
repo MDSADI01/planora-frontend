@@ -19,6 +19,7 @@ export type Event = {
   type: "IN_PERSON" | "ONLINE";
   fee?: number | null;
   eventCategory?: "PRIVATE" | "PUBLIC" | null;
+  eventTheme?: "CONFERENCES" | "MUSIC_FESTIVAL" | "WORKSHOPS" | "WEDDINGS" | "SPORTS_EVENTS" | "MEETUPS" | null;
   organizerId: string;
   organizer: {
     id: string;
@@ -149,7 +150,7 @@ export async function getEventByIdAction(id: string): Promise<Event | null> {
       method: "GET",
     });
     console.log(response);
-    
+
     if (!response || !response.ok) return null
 
     // const data = await parseJsonData<Event>(response);
@@ -158,5 +159,35 @@ export async function getEventByIdAction(id: string): Promise<Event | null> {
     return (await parseJsonData<Event>(response)) ?? null;
   } catch {
     return null;
+  }
+}
+
+export async function getTrendingEventsAction(): Promise<Event[]> {
+  try {
+    const response = await authenticatedRequest(`${getEventsApiUrl()}/events/trending`, {
+      method: "GET",
+    });
+
+    if (!response || !response.ok) return [];
+
+    return (await parseJsonData<Event[]>(response)) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getSearchSuggestionsAction(searchTerm: string): Promise<any[]> {
+  if (!searchTerm || searchTerm.length < 2) return [];
+  try {
+    const params = new URLSearchParams({ q: searchTerm });
+    const response = await authenticatedRequest(`${getEventsApiUrl()}/events/search-suggestions?${params.toString()}`, {
+      method: "GET",
+    });
+
+    if (!response || !response.ok) return [];
+
+    return (await parseJsonData<any[]>(response)) ?? [];
+  } catch {
+    return [];
   }
 }

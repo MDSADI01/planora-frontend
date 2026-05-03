@@ -2,9 +2,13 @@ import { redirect } from "next/navigation";
 import { Mail, ShieldCheck, UserRound } from "lucide-react";
 
 import { getLoggedInUser } from "@/src/app/(DashboardLayout)/(UserLayout)/action/event";
+import { getAllUsersAction, getAllEventsAction } from "@/src/app/(DashboardLayout)/(AdminLayout)/action/admin";
+import AdminDashboardCharts from "@/src/components/Dashboard/admin-dashboard-charts";
 
 const AdminProfilePage = async () => {
   const user = await getLoggedInUser();
+  const users = await getAllUsersAction();
+  const events = await getAllEventsAction();
   console.log(user);
 
   if (!user) {
@@ -68,6 +72,8 @@ const AdminProfilePage = async () => {
           </div>
         </div>
       </div>
+
+      <AdminDashboardCharts events={events} users={users} />
     </section>
   );
 };
