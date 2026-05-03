@@ -90,70 +90,103 @@ const Navbar = async ({ className }: NavbarProps) => {
       ];
 
   return (
-    <section className={cn("sticky top-0 z-50 w-full border-b border-border/50 bg-background/90 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 transition-all duration-300", className)}>
-      <div className="container">
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 shadow-[0_2px_20px_rgba(0,0,0,0.04)] backdrop-blur-md supports-[backdrop-filter]:bg-background/60 py-3 transition-all duration-500",
+        className
+      )}
+    >
+      <div className="container mx-auto px-4 md:px-6">
         <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <p className="ml-6 text-4xl">Planora</p>
+          {/* Brand/Logo */}
+          <Link href="/" className="flex items-center gap-2 group transition-transform duration-300 hover:scale-[1.02]">
+            <span
+              className={cn(
+                "text-2xl font-black tracking-tight ml-1",
+                isOverlayNav
+                  ? "text-white"
+                  : "bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 dark:from-white dark:to-white/70"
+              )}
+            >
+              Planora
+            </span>
           </Link>
 
-          <NavigationMenu className="hidden lg:block">
-            <NavigationMenuList className="gap-5">
+          {/* Desktop Navigation */}
+          <NavigationMenu className="hidden lg:flex flex-1 justify-center">
+            <NavigationMenuList className="gap-2">
               {navLinks.map((link) => (
                 <NavigationMenuItem key={link.href}>
                   <NavigationMenuLink
                     asChild
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "text-base font-semibold text-foreground/90 hover:text-foreground",
+                      "relative text-sm font-medium transition-colors bg-transparent",
+                      "text-foreground/70 hover:text-foreground",
+                      "hover:bg-muted/50 data-[state=open]:bg-muted/50",
+                      "after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-right after:scale-x-0 after:bg-indigo-600 after:transition-transform after:duration-300 hover:after:origin-bottom-left hover:after:scale-x-100",
                       isOverlayNav &&
-                        "bg-white/15 text-black backdrop-blur-sm hover:bg-white/25 hover:text-white focus:bg-white/25 focus:text-white data-[state=open]:bg-white/25"
+                        "text-white/80 hover:bg-white/10 hover:text-white after:bg-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10"
                     )}
                   >
-                    <Link href={link.href}>{link.label}</Link>
+                    <Link href={link.href} className="px-4 py-2">
+                      {link.label}
+                    </Link>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               ))}
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="hidden items-center gap-4 mr-6 lg:flex">
+          {/* Right Actions */}
+          <div className="hidden items-center gap-4 lg:flex">
             <ThemeToggle
               className={cn(
+                "rounded-full border-border/50 hover:bg-muted transition-colors",
                 isOverlayNav &&
-                  "border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  "border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               )}
             />
 
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={userImage} alt={userName || "User"} />
-                      <AvatarFallback>{userName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border-2 border-transparent hover:border-indigo-500/50 transition-all p-0">
+                    <Avatar className="h-full w-full">
+                      <AvatarImage src={userImage} alt={userName || "User"} className="object-cover" />
+                      <AvatarFallback className="bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/50 dark:to-violet-900/50 text-indigo-700 dark:text-indigo-300 font-medium">
+                        {userName?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <div className="flex flex-col space-y-1.5 p-2">
-                    <p className="text-sm font-medium leading-none">{userName || "User"}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {role === "ADMIN" ? "Admin" : "User"}
-                    </p>
+                <DropdownMenuContent className="w-60 p-2 rounded-xl border-border/50 shadow-xl" align="end" forceMount>
+                  <div className="flex items-center gap-3 p-2">
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={userImage} alt={userName || "User"} />
+                      <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-medium">
+                        {userName?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col space-y-0.5">
+                      <p className="text-sm font-semibold leading-none">{userName || "User"}</p>
+                      <p className="text-xs text-muted-foreground font-medium">
+                        {role === "ADMIN" ? "Administrator" : "Member"}
+                      </p>
+                    </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href={dashboardHref} className="cursor-pointer">
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
+                  <DropdownMenuSeparator className="my-2" />
+                  <DropdownMenuItem asChild className="rounded-lg cursor-pointer focus:bg-indigo-50 focus:text-indigo-600 dark:focus:bg-indigo-950/50 dark:focus:text-indigo-300 transition-colors">
+                    <Link href={dashboardHref} className="flex items-center py-2">
+                      <LayoutDashboard className="mr-3 h-4 w-4" />
                       Dashboard
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <form action={logoutAction} className="cursor-pointer w-full">
-                      <button type="submit" className="flex items-center w-full">
-                        <LogOut className="mr-2 h-4 w-4" />
+                  <DropdownMenuSeparator className="my-2" />
+                  <DropdownMenuItem asChild className="rounded-lg cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive transition-colors">
+                    <form action={logoutAction} className="w-full">
+                      <button type="submit" className="flex w-full items-center py-2">
+                        <LogOut className="mr-3 h-4 w-4" />
                         Log Out
                       </button>
                     </form>
@@ -161,100 +194,115 @@ const Navbar = async ({ className }: NavbarProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <>
+              <div className="flex items-center gap-3">
                 <Link href="/login">
                   <Button
-                    variant="outline"
-                    size="default"
+                    variant="ghost"
+                    size="sm"
                     className={cn(
-                      "font-semibold border-2",
-                      isOverlayNav &&
-                        "border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                      "font-medium rounded-full px-5 hover:bg-muted/50 transition-colors",
+                      isOverlayNav && "text-white hover:bg-white/10 hover:text-white"
                     )}
                   >
-                    Login
+                    Log in
                   </Button>
                 </Link>
                 <Link href="/register">
                   <Button
-                    size="default"
+                    size="sm"
                     className={cn(
-                      "font-semibold shadow-md",
+                      "font-medium rounded-full px-6 shadow-[0_4px_14px_0_rgb(79,70,229,39%)] hover:shadow-[0_6px_20px_rgba(79,70,229,23%)] hover:bg-indigo-600 bg-indigo-500 text-white transition-all hover:-translate-y-0.5",
                       isOverlayNav &&
-                        "bg-white text-black hover:bg-white/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
+                        "bg-white text-black shadow-white/20 hover:bg-white/90"
                     )}
                   >
                     Register Now
                   </Button>
                 </Link>
-              </>
+              </div>
             )}
           </div>
 
+          {/* Mobile Menu */}
           <Sheet>
             <SheetTrigger
               className={cn(
-                "lg:hidden inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-background",
+                "lg:hidden relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm transition-colors",
                 "hover:bg-muted hover:text-foreground",
                 isOverlayNav &&
-                  "border-white/60 bg-white/10 text-white hover:bg-white/20 hover:text-white"
+                  "border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"
               )}
             >
-              <MenuIcon className="h-4 w-4" />
+              <MenuIcon className="h-5 w-5" />
               <span className="sr-only">Open menu</span>
             </SheetTrigger>
-            <SheetContent side="top">
-              <SheetHeader>
-                <SheetTitle>Planora</SheetTitle>
+            <SheetContent side="right" className="w-full sm:w-80 border-l border-border/50 bg-background/95 backdrop-blur-xl p-0">
+              <SheetHeader className="p-6 border-b border-border/40 text-left">
+                <SheetTitle className="flex items-center gap-2">
+                  <span className="text-xl font-black tracking-tight">Planora</span>
+                </SheetTitle>
               </SheetHeader>
-              <div className="flex flex-col gap-4 p-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="font-medium hover:text-primary"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="mt-4 flex flex-col gap-3">
-                  <ThemeToggle />
+              <div className="flex flex-col h-[calc(100vh-5rem)] overflow-y-auto">
+                <div className="flex flex-col gap-1 p-4">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="px-4 py-3 rounded-xl font-medium text-foreground/80 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+                
+                <div className="mt-auto p-6 border-t border-border/40 bg-muted/20">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="text-sm font-medium text-muted-foreground">Theme</span>
+                    <ThemeToggle className="rounded-full" />
+                  </div>
+                  
                   {isLoggedIn ? (
-                    <>
-                      <div className="flex items-center gap-3 p-3 bg-muted rounded-lg">
-                        <Avatar className="h-10 w-10">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-3 p-4 bg-background border border-border/50 rounded-2xl shadow-sm">
+                        <Avatar className="h-12 w-12 border-2 border-background shadow-sm">
                           <AvatarImage src={userImage} alt={userName || "User"} />
-                          <AvatarFallback>{userName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                          <AvatarFallback className="bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-medium text-lg">
+                            {userName?.charAt(0).toUpperCase() || "U"}
+                          </AvatarFallback>
                         </Avatar>
                         <div>
-                          <p className="font-medium">{userName || "User"}</p>
-                          <p className="text-xs text-muted-foreground">{role === "ADMIN" ? "Admin" : "User"}</p>
+                          <p className="font-semibold">{userName || "User"}</p>
+                          <p className="text-xs text-muted-foreground font-medium">{role === "ADMIN" ? "Administrator" : "Member"}</p>
                         </div>
                       </div>
-                      <Link href={dashboardHref}>
-                        <Button variant="outline" className="w-full">
-                          <LayoutDashboard className="mr-2 h-4 w-4" />
-                          Dashboard
-                        </Button>
-                      </Link>
-                      <form action={logoutAction}>
-                        <Button type="submit" className="w-full">
-                          <LogOut className="mr-2 h-4 w-4" />
-                          Log Out
-                        </Button>
-                      </form>
-                    </>
+                      <div className="grid grid-cols-2 gap-3">
+                        <Link href={dashboardHref} className="w-full">
+                          <Button variant="outline" className="w-full rounded-xl border-border/50 h-12">
+                            <LayoutDashboard className="mr-2 h-4 w-4" />
+                            Dashboard
+                          </Button>
+                        </Link>
+                        <form action={logoutAction} className="w-full">
+                          <Button type="submit" variant="destructive" className="w-full rounded-xl shadow-sm hover:shadow h-12">
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Log Out
+                          </Button>
+                        </form>
+                      </div>
+                    </div>
                   ) : (
-                    <>
-                      <Link href="/login">
-                        <Button variant="outline" className="w-full">
-                          Login
+                    <div className="flex flex-col gap-3">
+                      <Link href="/login" className="w-full">
+                        <Button variant="outline" className="w-full rounded-xl h-12 border-border/50 font-semibold">
+                          Log in
                         </Button>
                       </Link>
-                      <Link href="/register">
-                        <Button className="w-full">Register Now</Button>
+                      <Link href="/register" className="w-full">
+                        <Button className="w-full rounded-xl h-12 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-md shadow-indigo-500/20">
+                          Register Now
+                        </Button>
                       </Link>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -262,7 +310,7 @@ const Navbar = async ({ className }: NavbarProps) => {
           </Sheet>
         </nav>
       </div>
-    </section>
+    </header>
   );
 };
 
