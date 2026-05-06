@@ -21,7 +21,8 @@ Planora solves this by providing a clean and intuitive task management interface
 - Next.js  
 - React  
 - TypeScript  
-- Tailwind CSS  
+- Tailwind CSS
+- JWT Authentication
 - REST API Integration  
 
 ---
