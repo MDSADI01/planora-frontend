@@ -39,8 +39,8 @@ Planora solves this by providing a clean and intuitive task management interface
 
 ## 📸 Screenshots / GIFs
 
-- Dashboard :
-<img src="https://i.postimg.cc/FRtNd3Hj/Screenshot-2026-05-06-203821.png" alt="Dashboard" />
+- Home :
+<img src="https://i.postimg.cc/FRtNd3Hj/Screenshot-2026-05-06-203821.png" alt="Home" />
 
 - Events Route :
 <img src="https://i.postimg.cc/dtWFRz0d/Screenshot-2026-05-06-203859.png" alt="Events" />
