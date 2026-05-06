@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Planora Frontend
 
-## Getting Started
+**Planora** is a modern productivity web application that helps users efficiently manage tasks, track progress, and stay organized in their daily workflow.
 
-First, run the development server:
+---
 
-```bash
+## 🧩 Problem Statement
+
+People often struggle to manage their daily tasks effectively due to lack of structure, reminders, and progress tracking. This leads to missed deadlines and reduced productivity.
+
+---
+
+## 💡 Solution Overview
+
+Planora solves this by providing a clean and intuitive task management interface where users can create tasks, organize them by status, and track their productivity in real time. It simplifies planning and improves focus.
+
+---
+
+## 🛠️ Tech Stack
+
+- Next.js  
+- React  
+- TypeScript  
+- Tailwind CSS  
+- REST API Integration  
+
+---
+
+## ✨ Key Features
+
+- 📋 Create, update, and delete tasks  
+- 📊 Track task progress (todo, in-progress, completed)  
+- 🎯 Clean and minimal dashboard UI  
+- 📱 Fully responsive design  
+- ⚡ Fast and optimized performance  
+- 🔔 Smooth user experience with real-time updates  
+
+---
+
+## 📸 Screenshots / GIFs
+
+- Dashboard :
+https://i.postimg.cc/FRtNd3Hj/Screenshot-2026-05-06-203821.png
+
+- Events Route :
+https://i.postimg.cc/dtWFRz0d/Screenshot-2026-05-06-203859.png
+
+
+### Setup Instructions
+
+# Clone the repository
+git clone https://github.com/your-username/planora-frontend.git
+
+# Navigate to project folder
+cd planora-frontend
+
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+# Env Variables:
+NEXT_PUBLIC_API_URL=https://planora-backend-zeta.vercel.app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Demo Credentials:
+- Customer:
+- Email: customer1@gmail.com
+- Password: customer1@1234
 
-## Learn More
+- Admin:
+- Email: admin@planora.com
+- Password: admin123
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
