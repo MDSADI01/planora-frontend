@@ -40,16 +40,16 @@ Planora solves this by providing a clean and intuitive task management interface
 ## 📸 Screenshots / GIFs
 
 - Dashboard :
-https://i.postimg.cc/FRtNd3Hj/Screenshot-2026-05-06-203821.png
+<img src="https://i.postimg.cc/FRtNd3Hj/Screenshot-2026-05-06-203821.png" alt="Dashboard" />
 
 - Events Route :
-https://i.postimg.cc/dtWFRz0d/Screenshot-2026-05-06-203859.png
+<img src="https://i.postimg.cc/dtWFRz0d/Screenshot-2026-05-06-203859.png" alt="Events" />
 
 
 ### Setup Instructions
 
 # Clone the repository
-git clone https://github.com/your-username/planora-frontend.git
+git clone https://github.com/MDSADI01/planora-frontend.git
 
 # Navigate to project folder
 cd planora-frontend
