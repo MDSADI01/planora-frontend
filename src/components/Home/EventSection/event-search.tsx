@@ -10,7 +10,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu";
-import { EventFilters, getSearchSuggestionsAction, getTrendingEventsAction } from "@/src/app/(CommonLayout)/action/event";
+import {
+  Event,
+  EventFilters,
+  getSearchSuggestionsAction,
+  getTrendingEventsAction,
+} from "@/src/app/(CommonLayout)/action/event";
 
 interface EventSearchProps {
   onSearch: (filters: EventFilters) => void;
@@ -21,8 +26,8 @@ const EventSearch = ({ onSearch, isLoading = false }: EventSearchProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentFilters, setCurrentFilters] = useState<EventFilters>({});
   
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [trendingEvents, setTrendingEvents] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<Event[]>([]);
+  const [trendingEvents, setTrendingEvents] = useState<Event[]>([]);
   const [isSearchingSuggestions, setIsSearchingSuggestions] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
@@ -75,7 +80,7 @@ const EventSearch = ({ onSearch, isLoading = false }: EventSearchProps) => {
     return () => clearTimeout(timer);
   }, [searchTerm, trendingEvents.length]);
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = (suggestion: Event) => {
     setSearchTerm(suggestion.title);
     setShowSuggestions(false);
     onSearch({
@@ -98,7 +103,7 @@ const EventSearch = ({ onSearch, isLoading = false }: EventSearchProps) => {
     }
   };
 
-  const setFilter = (key: keyof EventFilters, value: any) => {
+  const setFilter = <K extends keyof EventFilters>(key: K, value: EventFilters[K]) => {
     const newFilters = { ...currentFilters, [key]: value };
     setCurrentFilters(newFilters);
     onSearch({

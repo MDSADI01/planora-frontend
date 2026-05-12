@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
@@ -15,7 +16,6 @@ interface Footer7Props {
   description?: string;
   socialLinks?: Array<{
     icon: React.ReactElement;
-    href: string;
     label: string;
   }>;
   copyright?: string;
@@ -27,44 +27,44 @@ interface Footer7Props {
 
 const defaultSections = [
   {
-    title: "Product",
+    title: "Explore",
     links: [
-      { name: "Overview", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Marketplace", href: "#" },
-      { name: "Features", href: "#" },
+      { name: "Home", href: "/" },
+      { name: "Events", href: "/events" },
+      { name: "About", href: "/about" },
+      { name: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Company",
+    title: "Account",
     links: [
-      { name: "About", href: "#" },
-      { name: "Team", href: "#" },
-      { name: "Blog", href: "#" },
-      { name: "Careers", href: "#" },
+      { name: "Login", href: "/login" },
+      { name: "Register", href: "/register" },
+      { name: "My Events", href: "/my-events" },
+      { name: "My Invitations", href: "/pending-invitations" },
     ],
   },
   {
-    title: "Resources",
+    title: "Support",
     links: [
-      { name: "Help", href: "#" },
-      { name: "Sales", href: "#" },
-      { name: "Advertise", href: "#" },
-      { name: "Privacy", href: "#" },
+      { name: "Profile", href: "/profile" },
+      { name: "Reviews", href: "/my-reviews" },
+      { name: "Participants", href: "/event-participants" },
+      { name: "Create Event", href: "/add-events" },
     ],
   },
 ];
 
 const defaultSocialLinks = [
-  { icon: <FaInstagram className="size-5" />, href: "#", label: "Instagram" },
-  { icon: <FaFacebook className="size-5" />, href: "#", label: "Facebook" },
-  { icon: <FaTwitter className="size-5" />, href: "#", label: "Twitter" },
-  { icon: <FaLinkedin className="size-5" />, href: "#", label: "LinkedIn" },
+  { icon: <FaInstagram className="size-5" />, label: "Instagram" },
+  { icon: <FaFacebook className="size-5" />, label: "Facebook" },
+  { icon: <FaTwitter className="size-5" />, label: "Twitter" },
+  { icon: <FaLinkedin className="size-5" />, label: "LinkedIn" },
 ];
 
 const defaultLegalLinks = [
-  { name: "Terms and Conditions", href: "#" },
-  { name: "Privacy Policy", href: "#" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
 ];
 
 const Footer = ({
@@ -72,48 +72,43 @@ const Footer = ({
     title: "Planora",
   },
   sections = defaultSections,
-  description = "A collection of events where you can explore world's various fantasy moments.",
+  description = "Discover, create, and manage events with a smoother planning experience.",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "Copyright 2026 Planora. All rights reserved.",
   legalLinks = defaultLegalLinks,
   className,
 }: Footer7Props) => {
   return (
-    <section className={cn("py-32", className)}>
+    <section className={cn("py-20", className)}>
       <div className="container">
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
-            {/* Logo */}
-            <div className="flex items-center gap-2 lg:justify-start">
-              <a href={"/"}>
+            <Link href="/" className="inline-flex items-center gap-2 lg:justify-start">
               <h2 className="text-xl font-semibold">{logo.title}</h2>
-              </a>
-              
-            </div>
-            <p className="max-w-[70%] text-sm text-muted-foreground">
+            </Link>
+
+            <p className="max-w-md text-sm text-muted-foreground">
               {description}
             </p>
-            <ul className="flex items-center space-x-6 text-muted-foreground">
-              {socialLinks.map((social, idx) => (
-                <li key={idx} className="font-medium hover:text-primary">
-                  <a href={social.href} aria-label={social.label}>
-                    {social.icon}
-                  </a>
+
+            <ul className="flex flex-wrap items-center gap-4 text-muted-foreground">
+              {socialLinks.map((social) => (
+                <li key={social.label} className="flex items-center gap-2 font-medium">
+                  {social.icon}
+                  <span className="text-sm">{social.label}</span>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="grid w-full gap-6 md:grid-cols-3 lg:gap-20">
-            {sections.map((section, sectionIdx) => (
-              <div key={sectionIdx}>
+
+          <div className="grid w-full gap-6 md:grid-cols-3 lg:gap-12">
+            {sections.map((section) => (
+              <div key={section.title}>
                 <h3 className="mb-4 font-bold">{section.title}</h3>
                 <ul className="space-y-3 text-sm text-muted-foreground">
-                  {section.links.map((link, linkIdx) => (
-                    <li
-                      key={linkIdx}
-                      className="font-medium hover:text-primary"
-                    >
-                      <a href={link.href}>{link.name}</a>
+                  {section.links.map((link) => (
+                    <li key={link.href} className="font-medium hover:text-primary">
+                      <Link href={link.href}>{link.name}</Link>
                     </li>
                   ))}
                 </ul>
@@ -121,12 +116,13 @@ const Footer = ({
             ))}
           </div>
         </div>
+
         <div className="mt-8 flex flex-col justify-between gap-4 border-t py-8 text-xs font-medium text-muted-foreground md:flex-row md:items-center md:text-left">
           <p className="order-2 lg:order-1">{copyright}</p>
-          <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
-            {legalLinks.map((link, idx) => (
-              <li key={idx} className="hover:text-primary">
-                <a href={link.href}> {link.name}</a>
+          <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row md:gap-4">
+            {legalLinks.map((link) => (
+              <li key={link.href} className="hover:text-primary">
+                <Link href={link.href}>{link.name}</Link>
               </li>
             ))}
           </ul>

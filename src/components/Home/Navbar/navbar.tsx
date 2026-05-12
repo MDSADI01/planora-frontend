@@ -1,4 +1,4 @@
-import { MenuIcon, User, LogOut, LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, LogOut, MenuIcon } from "lucide-react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 
@@ -59,18 +59,11 @@ const getRoleFromToken = (token?: string) => {
 const Navbar = async ({ className }: NavbarProps) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
-  const refreshToken = cookieStore.get("refreshToken")?.value;
   const isLoggedIn = Boolean(accessToken);
   const userData = getRoleFromToken(accessToken);
   const role = userData?.role;
   const userImage = userData?.image;
   const userName = userData?.name;
-  console.log("=== Cookie Data ===");
-  console.log("accessToken:", accessToken);
-  console.log("refreshToken:", refreshToken);
-  console.log("isLoggedIn:", isLoggedIn);
-  console.log("role:", role);
-  console.log("===================");
   const dashboardHref = role === "ADMIN" ? "/adminProfile" : "/profile";
   const isOverlayNav = className?.includes("text-white");
   const navLinks = isLoggedIn
@@ -97,7 +90,7 @@ const Navbar = async ({ className }: NavbarProps) => {
       )}
     >
       <div className="container mx-auto px-4 md:px-6">
-        <nav className="flex items-center justify-between">
+        <nav className="flex items-center justify-between gap-3">
           {/* Brand/Logo */}
           <Link href="/" className="flex items-center gap-2 group transition-transform duration-300 hover:scale-[1.02]">
             <span
@@ -113,8 +106,8 @@ const Navbar = async ({ className }: NavbarProps) => {
           </Link>
 
           {/* Desktop Navigation */}
-          <NavigationMenu className="hidden lg:flex flex-1 justify-center">
-            <NavigationMenuList className="gap-2">
+          <NavigationMenu className="hidden xl:flex min-w-0 flex-1 justify-center">
+            <NavigationMenuList className="gap-1 xl:gap-2">
               {navLinks.map((link) => (
                 <NavigationMenuItem key={link.href}>
                   <NavigationMenuLink
@@ -129,7 +122,7 @@ const Navbar = async ({ className }: NavbarProps) => {
                         "text-white/80 hover:bg-white/10 hover:text-white after:bg-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10"
                     )}
                   >
-                    <Link href={link.href} className="px-4 py-2">
+                    <Link href={link.href} className="px-2 py-2 xl:px-4">
                       {link.label}
                     </Link>
                   </NavigationMenuLink>
@@ -139,7 +132,7 @@ const Navbar = async ({ className }: NavbarProps) => {
           </NavigationMenu>
 
           {/* Right Actions */}
-          <div className="hidden items-center gap-4 lg:flex">
+          <div className="hidden items-center gap-4 xl:flex">
             <ThemeToggle
               className={cn(
                 "rounded-full border-border/50 hover:bg-muted transition-colors",
@@ -227,7 +220,7 @@ const Navbar = async ({ className }: NavbarProps) => {
           <Sheet>
             <SheetTrigger
               className={cn(
-                "lg:hidden relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm transition-colors",
+                "xl:hidden relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/50 bg-background/50 backdrop-blur-sm shadow-sm transition-colors",
                 "hover:bg-muted hover:text-foreground",
                 isOverlayNav &&
                   "border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white"

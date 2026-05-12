@@ -2,9 +2,7 @@
 
 import { env } from "@/src/env";
 import {
-  decodeJwtPayload,
   getAuthCookies,
-  parseApiMessage,
   tryRefreshAccessToken,
 } from "@/src/lib/server-auth";
 
@@ -26,7 +24,7 @@ export type Event = {
     name?: string;
     image?: string;
   };
-  participants?: any[]; // Adjust this type based on your actual participant structure
+  participants?: unknown[];
   reviews?: {
     id: string;
     rating: number;
@@ -45,14 +43,9 @@ export type EventFilters = {
   isFree?: boolean;
 };
 
-type JwtPayload = {
-  sub?: string;
-  id?: string;
-  userId?: string;
-  email?: string;
-  role?: string;
-  userRole?: string;
-  name?: string;
+const getNumericFee = (fee: Event["fee"]) => {
+  const numericFee = Number(fee ?? 0);
+  return Number.isNaN(numericFee) ? 0 : numericFee;
 };
 
 const getEventsApiUrl = () => {
@@ -122,10 +115,6 @@ export async function getEventsAction(filters?: EventFilters): Promise<Event[]> 
     if (filters?.searchTerm) {
       params.append('search', filters.searchTerm);
     }
-    if (filters?.isFree !== undefined) {
-      params.append('isFree', filters.isFree.toString());
-    }
-
     const url = params.toString() 
       ? `${getEventsApiUrl()}/events?${params.toString()}`
       : `${getEventsApiUrl()}/events`;
@@ -136,7 +125,16 @@ export async function getEventsAction(filters?: EventFilters): Promise<Event[]> 
     
     if (!response || !response.ok) return [];
 
-    return (await parseJsonData<Event[]>(response)) ?? [];
+    const events = (await parseJsonData<Event[]>(response)) ?? [];
+
+    if (filters?.isFree === undefined) {
+      return events;
+    }
+
+    return events.filter((event) => {
+      const isFreeEvent = getNumericFee(event.fee) === 0;
+      return filters.isFree ? isFreeEvent : !isFreeEvent;
+    });
   } catch {
     return [];
   }
@@ -176,7 +174,7 @@ export async function getTrendingEventsAction(): Promise<Event[]> {
   }
 }
 
-export async function getSearchSuggestionsAction(searchTerm: string): Promise<any[]> {
+export async function getSearchSuggestionsAction(searchTerm: string): Promise<Event[]> {
   if (!searchTerm || searchTerm.length < 2) return [];
   try {
     const params = new URLSearchParams({ q: searchTerm });
@@ -186,7 +184,7 @@ export async function getSearchSuggestionsAction(searchTerm: string): Promise<an
 
     if (!response || !response.ok) return [];
 
-    return (await parseJsonData<any[]>(response)) ?? [];
+    return (await parseJsonData<Event[]>(response)) ?? [];
   } catch {
     return [];
   }
